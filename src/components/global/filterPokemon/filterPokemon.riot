@@ -1,0 +1,92 @@
+<filterPokemon>
+   <h3>Elige un filtro</h3>
+    <select id="poke-type" class="form-select" aria-label="Default select example">
+    <option >filter by type</option>
+    <option value="grass">Grass</option>
+    <option value="water">Water</option>
+    <option value="bug">Bug</option>
+    <option value="normal">Normal</option>
+    <option value="electric">Electric</option>
+    <option value="ground">Ground</option>
+    <option value="fairy">Fairy</option>
+    <option value="psychic">Psychic</option>
+    <option value="rock">Rock</option>
+    <option value="ghost">Ghost</option>
+    <option value="ice">Ice</option>
+    <option value="dragon">Dragon</option>
+    </select>
+    
+   <script>
+    import getPokemons from '../../../service/pokemonService'
+    import createPokemonCard from './index'
+    import axios from "axios";
+     
+     const div= document.getElementById("myDIV") 
+     let arrayPoke = []
+     let pokeSelect = []
+     
+
+     const filter= (pTypeSelected, pAbilitySelected) =>{
+        //pokeSelect.shift()
+        console.log(pTypeSelected)
+        let filteredInfomation = []
+        if(!pTypeSelected == ""){
+          console.log("estoy en el primer filtro")
+            filteredInfomation = arrayPoke.filter((p)=> p.data.types[0].type.name === pTypeSelected)
+        }
+        if(!pAbilitySelected == ""){
+            if(filteredInfomation != NaN){
+            filteredInfomation = filteredInfomation.filter((p)=> p.data.abilities[0].ability.name === pAbilitySelected)
+            }else{
+            filteredInfomation = arrayPoke.filter((p)=> p.data.abilities[0].ability.name === pAbilitySelected)
+            }
+        }
+        pokeSelect=filteredInfomation
+       }
+
+      const printPokemon= ()=>{
+              div.innerHTML=''
+              console.log("pokeselect")
+              console.log(pokeSelect)
+              pokeSelect.forEach((p) => { 
+               createPokemonCard(p.data)
+                })
+          }
+        
+        
+    export default {
+      onBeforeMount(state) {
+          this.getPokemonData()
+      },
+
+      onMounted() {
+        const select= document.querySelector('#poke-type')  
+        select.addEventListener('change', function() {
+          const val= this.value;  
+         filter(val, ""),
+         printPokemon()
+        })
+      },
+
+      getPokemonData(value) {
+          getPokemons().then(function (response) {
+          const data= response.data.results;
+            return Promise.all(
+             data.map((poke)=> axios.get(poke.url))
+           )
+          })
+          .then((pokeRes)=>{
+            arrayPoke = pokeRes
+            arrayPoke.forEach((p) => { 
+               createPokemonCard(p.data)
+                })
+            //console.log(arrayPoke)
+          })
+         .catch(function (error) {
+          // manejar error
+          console.log(error);
+         })
+       }
+    } 
+   </script>
+</filterPokemon>
