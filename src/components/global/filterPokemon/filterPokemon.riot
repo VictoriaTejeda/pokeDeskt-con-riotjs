@@ -1,7 +1,8 @@
-<filterPokemon>
+<filterPokemon> 
+<div class= container-select>
    <h3>Elige un filtro</h3>
-    <select id="poke-type" class="form-select" aria-label="Default select example">
-    <option >filter by type</option>
+    <select id="poke-type" class="form-select" aria-label="filter by type">
+    <option  value="select">filter by type</option>
     <option value="grass">Grass</option>
     <option value="water">Water</option>
     <option value="bug">Bug</option>
@@ -9,13 +10,66 @@
     <option value="electric">Electric</option>
     <option value="ground">Ground</option>
     <option value="fairy">Fairy</option>
+    <option value="fighting">Fighting</option>
+    <option value="poison">Poison</option>
     <option value="psychic">Psychic</option>
     <option value="rock">Rock</option>
     <option value="ghost">Ghost</option>
     <option value="ice">Ice</option>
     <option value="dragon">Dragon</option>
     </select>
-    
+
+    <select id="poke-ability" class="form-select" aria-label="filter by ability">
+    <option value= "select">filter by ability</option>
+    <option value="blaze">Blaze</option>
+    <option value="chlorophyll">Chlorophyll</option>
+    <option value="clear-body">Clear-body</option>
+    <option value="compound-eyes">Compound-eyes</option>
+    <option value="cute-charm">Cute-charm</option>
+    <option value="cursed-body">Cursed-body</option>
+    <option value="damp">Damp</option>
+    <option value="early-bird">Early-bird</option>
+    <option value="effect-spore">Effect-spore</option>
+    <option value="guts">Guts</option>
+    <option value="hyper-cutter">Hyper-cutter</option>
+    <option value="inner-focus">Inner-focus</option>
+    <option value="insomnia">Insomnia</option>
+    <option value="illuminate">Illuminate</option>
+    <option value="immunity">Immunity</option>
+    <option value="intimidate">Intimidate</option>
+    <option value="keen-eye">Keen-eye</option>
+    <option value="levitate">Levitate</option>
+    <option value="lightning-rod">Lightning-rod</option>
+    <option value="limber">Limber</option>
+    <option value="magnet-pull">Magnet-pull</option>
+    <option value="natural-cure">Natural-cure</option>
+    <option value="overgrow">Overgrow</option>
+    <option value="oblivious">Oblivious</option>
+    <option value="own-tempo">Own-tempo</option>
+    <option value="pickup">Pickup</option>
+    <option value="poison-point">Poison-point</option>
+    <option value="pressure">Pressure</option>
+    <option value="rock-head">Rock-head</option>
+    <option value="run-away">Run-away</option>
+    <option value="sand-veil">Sand-veil</option>
+    <option value="shed-skin">Shed-skin</option>
+    <option value="shell-armor">Shell-armor</option>
+    <option value="shield-dust">Shield-dust</option>
+    <option value="synchronize">Synchronize</option>
+    <option value="soundproof">Soundproof</option>
+    <option value="static">Static</option>
+    <option value="swarm">Swarm</option>
+    <option value="swift-swim">Swift-swim</option>
+    <option value="synchronize">Synchronize</option>  
+    <option value="thick-fat">Thick-fat</option>
+    <option value="torrent">Torrent</option>
+    <option value="trace">Trace</option>
+    <option value="vital-spirit">Eital-spirit</option>
+    <option value="volt-absorb">Volt-absorb</option>
+    <option value="water-absorb">water-absorb</option>
+    </select>
+    <button class="btn btn-warning" onclick={ cleanfilter }>Limpiar los filtros</button>
+  </div >  
    <script>
     import getPokemons from '../../../service/pokemonService'
     import createPokemonCard from './index'
@@ -24,36 +78,51 @@
      const div= document.getElementById("myDIV") 
      let arrayPoke = []
      let pokeSelect = []
-     
+     let ability= ''
+     let type=''
 
      const filter= (pTypeSelected, pAbilitySelected) =>{
-        //pokeSelect.shift()
-        console.log(pTypeSelected)
+        //console.log(pTypeSelected)
         let filteredInfomation = []
         if(!pTypeSelected == ""){
-          console.log("estoy en el primer filtro")
+          console.log('estoy en filter type')
             filteredInfomation = arrayPoke.filter((p)=> p.data.types[0].type.name === pTypeSelected)
+        } if(pTypeSelected == "select"){
+            filteredInfomation =  arrayPoke
         }
         if(!pAbilitySelected == ""){
-            if(filteredInfomation != NaN){
+           if(filteredInfomation.length != 0){
+              console.log("entre en habilidad")
+              console.log(filteredInfomation.length)
             filteredInfomation = filteredInfomation.filter((p)=> p.data.abilities[0].ability.name === pAbilitySelected)
-            }else{
+            } else{
+              console.log("entre en array vacio")
             filteredInfomation = arrayPoke.filter((p)=> p.data.abilities[0].ability.name === pAbilitySelected)
-            }
+            } 
         }
         pokeSelect=filteredInfomation
        }
 
       const printPokemon= ()=>{
-              div.innerHTML=''
-              console.log("pokeselect")
-              console.log(pokeSelect)
+              if(pokeSelect.length == 0){
+                div.innerHTML=
+                `<div class="none" > 
+                    <a><img src="https://i.ibb.co/HVBjf7Q/qa7f7jffqq6vdtrm10umtb7phj-e70316c4c26e604d8198fc9edcd3bc2f.png" alt="Sin resultados" border="0"></a>
+                    <h3>Sin resultados</h3>
+                  <div>`
+              }else{
+                div.innerHTML=''
               pokeSelect.forEach((p) => { 
                createPokemonCard(p.data)
                 })
+              }
           }
-        
-        
+
+      div.innerHTML=''
+              pokeSelect.forEach((p) => { 
+               createPokemonCard(p.data)
+                })
+
     export default {
       onBeforeMount(state) {
           this.getPokemonData()
@@ -62,9 +131,16 @@
       onMounted() {
         const select= document.querySelector('#poke-type')  
         select.addEventListener('change', function() {
-          const val= this.value;  
-         filter(val, ""),
-         printPokemon()
+          console.log("abilidad " + ability)
+          type= this.value; 
+          filter(type, ability),
+          printPokemon()
+        })
+        const selectAbility= document.querySelector('#poke-ability')  
+        selectAbility.addEventListener('change', function() {  
+          ability=this.value;
+          filter(type, ability),
+          printPokemon()
         })
       },
 
@@ -86,6 +162,10 @@
           // manejar error
           console.log(error);
          })
+       },
+
+       cleanfilter() {
+             window.location.reload(true)
        }
     } 
    </script>
